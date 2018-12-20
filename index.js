@@ -48,6 +48,8 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
       }
     }
 
+    console.log(JSON.stringify(this._browsers, null, 2))
+
     this.write('\n');
     this.failures = [];
     this.currentSuite = [];
@@ -82,8 +84,7 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   this.writeSpecMessage = function (status) {
     return (function (browser, result) {
       var suite = result.suite;
-      var browserName = (browser.toString().split(' ').shift() + ':               ').slice(0, 15);
-      var indent = browserName + "  ";
+      var indent = browser.fullName + "  ";
       suite.forEach(function (value, index) {
         if (index >= this.currentSuite.length || this.currentSuite[index] != value) {
           if (index === 0) {
