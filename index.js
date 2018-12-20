@@ -48,8 +48,6 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
       }
     }
 
-    console.log(JSON.stringify(this._browsers, null, 2))
-
     this.write('\n');
     this.failures = [];
     this.currentSuite = [];
@@ -84,7 +82,16 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   this.writeSpecMessage = function (status) {
     return (function (browser, result) {
       var suite = result.suite;
-      var indent = browser.fullName + "  ";
+      var padding = this._browsers.reduce(function(str, browser) {
+        var browserShortName = browser.name.split(' ').shift();
+        if (browserShortName.length > str.length) {
+          return repeatString(" ", browserShortName.length);
+        }
+        return str;
+      }, "")
+      var browserShortName = browser.name.split(' ').shift();
+      var browserName = (browserShortName + padding).slice(0, padding.length) + ":";
+      var indent = browserName + "  ";
       suite.forEach(function (value, index) {
         if (index >= this.currentSuite.length || this.currentSuite[index] != value) {
           if (index === 0) {
@@ -152,6 +159,15 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   this.specFailure = reporterCfg.suppressFailed ? noop : this.onSpecFailure;
   this.suppressErrorSummary = reporterCfg.suppressErrorSummary || false;
   this.showSpecTiming = reporterCfg.showSpecTiming || false;
+
+  function repeatString(string, times) {
+    if(times < 0) 
+      return "";
+    if(times === 1) 
+      return string;
+    else 
+      return string + repeatString(string, times - 1);
+  }
 };
 
 SpecReporter.$inject = ['baseReporterDecorator', 'formatError', 'config'];
