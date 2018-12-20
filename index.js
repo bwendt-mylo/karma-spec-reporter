@@ -106,7 +106,7 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
         else if (!result.success) specName = specName.red;
       }
 
-      var msg = indent + status + specName + elapsedTime;
+      var msg = indent + status + specName + ' [' + browser.name + ']' + elapsedTime;
 
       result.log.forEach(function (log) {
         if (reporterCfg.maxLogLines) {
