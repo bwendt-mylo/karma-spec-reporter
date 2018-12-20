@@ -82,7 +82,7 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   this.writeSpecMessage = function (status) {
     return (function (browser, result) {
       var suite = result.suite;
-      var indent = "  ";
+      var indent = "[" + browser + "]  ";
       suite.forEach(function (value, index) {
         if (index >= this.currentSuite.length || this.currentSuite[index] != value) {
           if (index === 0) {
@@ -106,7 +106,7 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
         else if (!result.success) specName = specName.red;
       }
 
-      var msg = indent + status + specName + ' [' + browser.name + ']' + elapsedTime;
+      var msg = indent + status + specName + elapsedTime;
 
       result.log.forEach(function (log) {
         if (reporterCfg.maxLogLines) {
@@ -124,14 +124,10 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   };
 
   this.LOG_SINGLE_BROWSER = '%s LOG: %s\n';
-  this.LOG_MULTI_BROWSER = '%s %s LOG: %s\n';
+  this.LOG_MULTI_BROWSER = '[%s] %s LOG: %s\n';
   var doLog = config && config.browserConsoleLogOptions && config.browserConsoleLogOptions.terminal;
   this.onBrowserLog = doLog ? function (browser, log, type) {
-    if (this._browsers && this._browsers.length === 1) {
-      this.write(this.LOG_SINGLE_BROWSER, type.toUpperCase(), this.USE_COLORS ? log.cyan : log);
-    } else {
-      this.write(this.LOG_MULTI_BROWSER, browser, type.toUpperCase(), this.USE_COLORS ? log.cyan : log);
-    }
+    this.write(this.LOG_MULTI_BROWSER, browser, type.toUpperCase(), this.USE_COLORS ? log.cyan : log);
   } : noop;
 
   function noop() {
