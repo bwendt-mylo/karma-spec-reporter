@@ -82,7 +82,8 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   this.writeSpecMessage = function (status) {
     return (function (browser, result) {
       var suite = result.suite;
-      var indent = getBrowserName(browser) + "  ";
+      var browserName = (browser.toString().split(' ').shift() + ':               ').slice(0, 15);
+      var indent = browserName + "  ";
       suite.forEach(function (value, index) {
         if (index >= this.currentSuite.length || this.currentSuite[index] != value) {
           if (index === 0) {
@@ -127,7 +128,11 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   this.LOG_MULTI_BROWSER = '%s %s LOG: %s\n';
   var doLog = config && config.browserConsoleLogOptions && config.browserConsoleLogOptions.terminal;
   this.onBrowserLog = doLog ? function (browser, log, type) {
-    this.write(this.LOG_MULTI_BROWSER, getBrowserName(browser), type.toUpperCase(), this.USE_COLORS ? log.cyan : log);
+    if (this._browsers && this._browsers.length === 1) {
+      this.write(this.LOG_SINGLE_BROWSER, type.toUpperCase(), this.USE_COLORS ? log.cyan : log);	
+    } else {	
+      this.write(this.LOG_MULTI_BROWSER, browser, type.toUpperCase(), this.USE_COLORS ? log.cyan : log);	
+    }
   } : noop;
 
   function noop() {
@@ -146,10 +151,6 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   this.specFailure = reporterCfg.suppressFailed ? noop : this.onSpecFailure;
   this.suppressErrorSummary = reporterCfg.suppressErrorSummary || false;
   this.showSpecTiming = reporterCfg.showSpecTiming || false;
-
-  function getBrowserName(browser) {
-    return (browser.toString().split(' ').shift() + ' ===============').slice(0, 15) + '>'
-  }
 };
 
 SpecReporter.$inject = ['baseReporterDecorator', 'formatError', 'config'];
