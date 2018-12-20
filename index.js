@@ -80,9 +80,6 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
 
   this.currentSuite = [];
   this.writeSpecMessage = function (status) {
-    function getBrowserName(browser) {
-      return (browser.toString().split(' ').shift() + ' ===============').slice(0, 15) + '>'
-    }
     return (function (browser, result) {
       var suite = result.suite;
       var indent = getBrowserName(browser) + "  ";
@@ -149,6 +146,10 @@ var SpecReporter = function (baseReporterDecorator, formatError, config) {
   this.specFailure = reporterCfg.suppressFailed ? noop : this.onSpecFailure;
   this.suppressErrorSummary = reporterCfg.suppressErrorSummary || false;
   this.showSpecTiming = reporterCfg.showSpecTiming || false;
+
+  function getBrowserName(browser) {
+    return (browser.toString().split(' ').shift() + ' ===============').slice(0, 15) + '>'
+  }
 };
 
 SpecReporter.$inject = ['baseReporterDecorator', 'formatError', 'config'];
